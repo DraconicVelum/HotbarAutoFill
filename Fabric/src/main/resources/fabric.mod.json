@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "hotbarautofill",
+  "version": "${version}",
+  "name": "Hotbar Auto Fill",
+  "description": "Client-side hotbar refill for vanilla and Bukkit/Paper servers.",
+  "authors": [
+    "Draconic Velum"
+  ],
+  "contact": {
+    "homepage": "https://github.com/DraconicVelum/HotbarAutoFill",
+    "sources": "https://github.com/DraconicVelum/HotbarAutoFill",
+    "issues": "https://github.com/DraconicVelum/HotbarAutoFill/issues"
+  },
+  "license": "The GNU General Public License (GPL-3.0)",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.draconicvelum.hotbarautofill.HotbarAutoFillMod"
+    ]
+  },
+  "mixins": [
+  ],
+  "depends": {
+    "fabricloader": "${loader_version_range}",
+    "minecraft": "${minecraft_version_range}",
+    "java": ">=25",
+    "fabric-api": "${fabric_api_version_range}"
+  }
+}
