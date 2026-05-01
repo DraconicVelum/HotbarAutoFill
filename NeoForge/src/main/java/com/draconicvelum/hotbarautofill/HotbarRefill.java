@@ -17,6 +17,7 @@ final class HotbarRefill {
 	private static HotbarAutoFillConfig config;
 	private static int cooldownTicks;
 	private static int recentUseOrAttackTicks;
+	private static int recentDropTicks;
 	private static int warningCooldownTicks;
 
 	static {
@@ -55,6 +56,7 @@ final class HotbarRefill {
 			updateTrackedStack(selectedSlot, selectedStack);
 			cooldownTicks = 0;
 			recentUseOrAttackTicks = 0;
+			recentDropTicks = 0;
 			return;
 		}
 
@@ -62,9 +64,19 @@ final class HotbarRefill {
 			return;
 		}
 
-		updateRecentUseOrAttackTicks(client, player);
+		updateRecentActionTicks(client, player);
 
 		if (!selectedStack.isEmpty()) {
+			ItemStack wantedStack = LAST_SELECTED_STACKS[selectedSlot];
+			if (shouldReplaceChangedStack(selectedStack, wantedStack)) {
+				mergeSelectedRemainderIntoExistingStack(player, gameMode, inventory, selectedSlot, selectedStack);
+				if (refillSelectedSlot(player, gameMode, inventory, selectedSlot, wantedStack)) {
+					updateTrackedStack(selectedSlot, selectedStack);
+					cooldownTicks = 2;
+					return;
+				}
+			}
+
 			updateTrackedStack(selectedSlot, selectedStack);
 			return;
 		}
@@ -74,31 +86,16 @@ final class HotbarRefill {
 			return;
 		}
 
-		if (!wasEmptiedByUseOrBreak(wantedStack)) {
+		if (!wasEmptiedByUseDropOrBreak(wantedStack)) {
 			LAST_SELECTED_STACKS[selectedSlot] = ItemStack.EMPTY;
 			return;
 		}
 
-		int sourceInventorySlot = findRefillSourceSlot(inventory, selectedSlot, wantedStack);
-		if (sourceInventorySlot == Inventory.NOT_FOUND_INDEX) {
+		if (refillSelectedSlot(player, gameMode, inventory, selectedSlot, wantedStack)) {
+			cooldownTicks = 2;
+		} else {
 			LAST_SELECTED_STACKS[selectedSlot] = ItemStack.EMPTY;
-			return;
 		}
-
-		AbstractContainerMenu menu = player.containerMenu;
-		OptionalInt sourceMenuSlot = menu.findSlot(inventory, sourceInventorySlot);
-		if (sourceMenuSlot.isEmpty()) {
-			return;
-		}
-
-		gameMode.handleContainerInput(
-				menu.containerId,
-				sourceMenuSlot.getAsInt(),
-				selectedSlot,
-				ContainerInput.SWAP,
-				player
-		);
-		cooldownTicks = 2;
 	}
 
 	private static int findRefillSourceSlot(Inventory inventory, int selectedSlot, ItemStack wantedStack) {
@@ -137,16 +134,26 @@ final class HotbarRefill {
 		return ItemStack.isSameItemSameComponents(candidate, wantedStack);
 	}
 
-	private static boolean wasEmptiedByUseOrBreak(ItemStack wantedStack) {
-		if (recentUseOrAttackTicks <= 0) {
+	private static boolean wasEmptiedByUseDropOrBreak(ItemStack wantedStack) {
+		if (wantedStack.isDamageableItem()) {
+			return recentDropTicks > 0
+					|| recentUseOrAttackTicks > 0 && wantedStack.getDamageValue() >= wantedStack.getMaxDamage() - 1;
+		}
+
+		return recentDropTicks > 0 || wantedStack.getCount() <= 1 && recentUseOrAttackTicks > 0;
+	}
+
+	private static boolean shouldReplaceChangedStack(ItemStack selectedStack, ItemStack wantedStack) {
+		if (wantedStack.isEmpty() || cooldownTicks > 0 || recentUseOrAttackTicks <= 0) {
 			return false;
 		}
-
 		if (wantedStack.isDamageableItem()) {
-			return wantedStack.getDamageValue() >= wantedStack.getMaxDamage() - 1;
+			return false;
 		}
-
-		return wantedStack.getCount() <= 1;
+		if (wantedStack.getCount() > 1) {
+			return false;
+		}
+		return !ItemStack.isSameItemSameComponents(selectedStack, wantedStack);
 	}
 
 	private static boolean handleToolProtection(
@@ -157,7 +164,7 @@ final class HotbarRefill {
 			int selectedSlot,
 			ItemStack selectedStack
 	) {
-		if (config == null || !config.preventToolBreakingWithoutReplacement()) {
+		if (config == null || !config.preventToolBreaking()) {
 			return false;
 		}
 		if (!selectedStack.isDamageableItem() || !isToolAboutToBreak(selectedStack)) {
@@ -213,6 +220,71 @@ final class HotbarRefill {
 		return true;
 	}
 
+	private static boolean mergeSelectedRemainderIntoExistingStack(
+			LocalPlayer player,
+			MultiPlayerGameMode gameMode,
+			Inventory inventory,
+			int selectedSlot,
+			ItemStack selectedStack
+	) {
+		int targetInventorySlot = findMergeTargetSlot(inventory, selectedSlot, selectedStack);
+		if (targetInventorySlot == Inventory.NOT_FOUND_INDEX) {
+			return false;
+		}
+
+		AbstractContainerMenu menu = player.containerMenu;
+		OptionalInt selectedMenuSlot = menu.findSlot(inventory, selectedSlot);
+		OptionalInt targetMenuSlot = menu.findSlot(inventory, targetInventorySlot);
+		if (selectedMenuSlot.isEmpty() || targetMenuSlot.isEmpty()) {
+			return false;
+		}
+
+		gameMode.handleContainerInput(menu.containerId, selectedMenuSlot.getAsInt(), 0, ContainerInput.PICKUP, player);
+		gameMode.handleContainerInput(menu.containerId, targetMenuSlot.getAsInt(), 0, ContainerInput.PICKUP, player);
+		return true;
+	}
+
+	private static int findMergeTargetSlot(Inventory inventory, int selectedSlot, ItemStack selectedStack) {
+		for (int slot = 0; slot < inventory.getContainerSize(); slot++) {
+			if (slot == selectedSlot) {
+				continue;
+			}
+
+			ItemStack candidate = inventory.getItem(slot);
+			if (canFullyMerge(candidate, selectedStack)) {
+				return slot;
+			}
+		}
+		return Inventory.NOT_FOUND_INDEX;
+	}
+
+	private static boolean canFullyMerge(ItemStack candidate, ItemStack selectedStack) {
+		if (candidate.isEmpty() || !candidate.isStackable()) {
+			return false;
+		}
+		if (!ItemStack.isSameItemSameComponents(candidate, selectedStack)) {
+			return false;
+		}
+
+		int maxStackSize = candidate.getItem().getDefaultMaxStackSize();
+		return candidate.getCount() + selectedStack.getCount() <= maxStackSize;
+	}
+
+	private static boolean refillSelectedSlot(
+			LocalPlayer player,
+			MultiPlayerGameMode gameMode,
+			Inventory inventory,
+			int selectedSlot,
+			ItemStack wantedStack
+	) {
+		int sourceInventorySlot = findRefillSourceSlot(inventory, selectedSlot, wantedStack);
+		if (sourceInventorySlot == Inventory.NOT_FOUND_INDEX) {
+			return false;
+		}
+
+		return swapIntoSelectedSlot(player, gameMode, inventory, selectedSlot, sourceInventorySlot);
+	}
+
 	private static void blockCurrentUseInput(Minecraft client) {
 		client.options.keyUse.setDown(false);
 		client.options.keyAttack.setDown(false);
@@ -226,11 +298,17 @@ final class HotbarRefill {
 		return stack.getDamageValue() >= stack.getMaxDamage() - 1;
 	}
 
-	private static void updateRecentUseOrAttackTicks(Minecraft client, LocalPlayer player) {
+	private static void updateRecentActionTicks(Minecraft client, LocalPlayer player) {
 		if (client.options.keyUse.isDown() || client.options.keyAttack.isDown() || player.isUsingItem()) {
 			recentUseOrAttackTicks = RECENT_ACTION_WINDOW_TICKS;
 		} else if (recentUseOrAttackTicks > 0) {
 			recentUseOrAttackTicks--;
+		}
+
+		if (client.options.keyDrop.isDown()) {
+			recentDropTicks = RECENT_ACTION_WINDOW_TICKS;
+		} else if (recentDropTicks > 0) {
+			recentDropTicks--;
 		}
 	}
 
@@ -244,6 +322,7 @@ final class HotbarRefill {
 		}
 		cooldownTicks = 0;
 		recentUseOrAttackTicks = 0;
+		recentDropTicks = 0;
 		warningCooldownTicks = 0;
 	}
 }
