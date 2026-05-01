@@ -1,0 +1,6 @@
+{
+  "hotbarautofill.configuration.title": "Hotbar Auto Fill",
+  "hotbarautofill.configuration.refill_from_other_hotbar_slots": "Refill From Other Hotbar Slots",
+  "hotbarautofill.configuration.prevent_tool_breaking": "Prevent Tool Breaking",
+  "hotbarautofill.configuration.show_held_item_total_counter": "Show Held Item Total Counter"
+}
