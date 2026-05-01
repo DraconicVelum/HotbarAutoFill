@@ -11,9 +11,7 @@ public final class HotbarAutoFillMod implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		HotbarAutoFillConfig config = HotbarAutoFillConfig.load();
-		HotbarRefill.configure(config);
-		HotbarItemCounter.configure(config);
+		configure(HotbarAutoFillConfig.load());
 		ClientTickEvents.START_CLIENT_TICK.register(HotbarAutoFillMod::onClientTick);
 		HudElementRegistry.attachElementAfter(
 				VanillaHudElements.HOTBAR,
@@ -24,5 +22,10 @@ public final class HotbarAutoFillMod implements ClientModInitializer {
 
 	private static void onClientTick(net.minecraft.client.Minecraft client) {
 		HotbarRefill.tick(client);
+	}
+
+	static void configure(HotbarAutoFillConfig config) {
+		HotbarRefill.configure(config);
+		HotbarItemCounter.configure(config);
 	}
 }
