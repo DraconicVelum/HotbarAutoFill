@@ -18,6 +18,10 @@ base {
 repositories {
 	mavenCentral()
 	maven { url = "https://maven.fabricmc.net/" }
+	maven {
+		name = "Terraformers"
+		url = "https://maven.terraformersmc.com/"
+	}
 }
 
 tasks.named("jar") {
@@ -48,6 +52,7 @@ dependencies {
 
 	// Fabric API
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 
 processResources {
@@ -55,6 +60,10 @@ processResources {
 	inputs.property "minecraft_version_range", project.minecraft_version_range
 	inputs.property "loader_version_range", project.loader_version_range
 	inputs.property "fabric_api_version_range", project.fabric_api_version_range
+
+	from(rootProject.file("assets")) {
+		into "assets"
+	}
 
 	filesMatching("fabric.mod.json") {
 		expand(
