@@ -74,6 +74,20 @@ final class HotbarAutoFillConfig {
 		return new HotbarAutoFillConfig(refillFromOtherHotbarSlots, preventToolBreaking, showHeldItemTotalCounter);
 	}
 
+	static HotbarAutoFillConfig save(
+			boolean refillFromOtherHotbarSlots,
+			boolean preventToolBreaking,
+			boolean showHeldItemTotalCounter
+	) {
+		Path configPath = Minecraft.getInstance().gameDirectory.toPath().resolve("config").resolve(FILE_NAME);
+		Properties properties = new Properties();
+		properties.setProperty(REFILL_FROM_OTHER_HOTBAR_SLOTS, Boolean.toString(refillFromOtherHotbarSlots));
+		properties.setProperty(PREVENT_TOOL_BREAKING, Boolean.toString(preventToolBreaking));
+		properties.setProperty(SHOW_HELD_ITEM_TOTAL_COUNTER, Boolean.toString(showHeldItemTotalCounter));
+		saveDefaults(configPath, properties);
+		return new HotbarAutoFillConfig(refillFromOtherHotbarSlots, preventToolBreaking, showHeldItemTotalCounter);
+	}
+
 	boolean refillFromOtherHotbarSlots() {
 		return refillFromOtherHotbarSlots;
 	}
