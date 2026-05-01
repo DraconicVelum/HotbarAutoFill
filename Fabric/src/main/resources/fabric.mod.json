@@ -14,9 +14,13 @@
   },
   "license": "The GNU General Public License (GPL-3.0)",
   "environment": "client",
+  "icon": "assets/hotbar-auto-fill.png",
   "entrypoints": {
     "client": [
       "com.draconicvelum.hotbarautofill.HotbarAutoFillMod"
+    ],
+    "modmenu": [
+      "com.draconicvelum.hotbarautofill.HotbarAutoFillModMenu"
     ]
   },
   "mixins": [
@@ -26,5 +30,13 @@
     "minecraft": "${minecraft_version_range}",
     "java": ">=25",
     "fabric-api": "${fabric_api_version_range}"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.github": "https://github.com/DraconicVelum/HotbarAutoFill",
+        "modmenu.issues": "https://github.com/DraconicVelum/HotbarAutoFill/issues"
+      }
+    }
   }
 }
