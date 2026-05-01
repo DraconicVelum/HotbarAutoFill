@@ -14,10 +14,13 @@ It is client-side only and works on vanilla and Bukkit/Paper servers.
 ---
 
 ## <span style="color:#8000ff;">Features</span>
-- refills used-up items and broken tools
+- refills used, dropped, or consumed items
+- handles food, potions, soups, and broken tools
+- stacks bottles, bowls, buckets, and similar leftovers when possible
 - checks the main inventory first
 - optional hotbar fallback
 - optional tool protection before break
+- held-item total counter near the hotbar
 - ignores manual moves, drops, and swaps
 
 ---
@@ -26,7 +29,8 @@ It is client-side only and works on vanilla and Bukkit/Paper servers.
 `config/hotbarautofill.properties`
 
 - `refillFromOtherHotbarSlots=true`
-- `preventToolBreakingWithoutReplacement=false`
+- `preventToolBreaking=false`
+- `showHeldItemTotalCounter=true`
 
 ---
 
