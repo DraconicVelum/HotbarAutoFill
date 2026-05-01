@@ -12,16 +12,24 @@ import net.minecraft.client.Minecraft;
 final class HotbarAutoFillConfig {
 	private static final String FILE_NAME = "hotbarautofill.properties";
 	private static final String REFILL_FROM_OTHER_HOTBAR_SLOTS = "refillFromOtherHotbarSlots";
-	private static final String PREVENT_TOOL_BREAKING_WITHOUT_REPLACEMENT = "preventToolBreakingWithoutReplacement";
+	private static final String PREVENT_TOOL_BREAKING = "preventToolBreaking";
+	private static final String SHOW_HELD_ITEM_TOTAL_COUNTER = "showHeldItemTotalCounter";
 	private static final boolean DEFAULT_REFILL_FROM_OTHER_HOTBAR_SLOTS = true;
-	private static final boolean DEFAULT_PREVENT_TOOL_BREAKING_WITHOUT_REPLACEMENT = false;
+	private static final boolean DEFAULT_PREVENT_TOOL_BREAKING = false;
+	private static final boolean DEFAULT_SHOW_HELD_ITEM_TOTAL_COUNTER = true;
 
 	private final boolean refillFromOtherHotbarSlots;
-	private final boolean preventToolBreakingWithoutReplacement;
+	private final boolean preventToolBreaking;
+	private final boolean showHeldItemTotalCounter;
 
-	private HotbarAutoFillConfig(boolean refillFromOtherHotbarSlots, boolean preventToolBreakingWithoutReplacement) {
+	private HotbarAutoFillConfig(
+			boolean refillFromOtherHotbarSlots,
+			boolean preventToolBreaking,
+			boolean showHeldItemTotalCounter
+	) {
 		this.refillFromOtherHotbarSlots = refillFromOtherHotbarSlots;
-		this.preventToolBreakingWithoutReplacement = preventToolBreakingWithoutReplacement;
+		this.preventToolBreaking = preventToolBreaking;
+		this.showHeldItemTotalCounter = showHeldItemTotalCounter;
 	}
 
 	static HotbarAutoFillConfig load() {
@@ -34,7 +42,8 @@ final class HotbarAutoFillConfig {
 			} catch (IOException ignored) {
 				return new HotbarAutoFillConfig(
 						DEFAULT_REFILL_FROM_OTHER_HOTBAR_SLOTS,
-						DEFAULT_PREVENT_TOOL_BREAKING_WITHOUT_REPLACEMENT
+						DEFAULT_PREVENT_TOOL_BREAKING,
+						DEFAULT_SHOW_HELD_ITEM_TOTAL_COUNTER
 				);
 			}
 		}
@@ -45,28 +54,36 @@ final class HotbarAutoFillConfig {
 						Boolean.toString(DEFAULT_REFILL_FROM_OTHER_HOTBAR_SLOTS)
 				)
 		);
-		boolean preventToolBreakingWithoutReplacement = Boolean.parseBoolean(
+		boolean preventToolBreaking = Boolean.parseBoolean(
 				properties.getProperty(
-						PREVENT_TOOL_BREAKING_WITHOUT_REPLACEMENT,
-						Boolean.toString(DEFAULT_PREVENT_TOOL_BREAKING_WITHOUT_REPLACEMENT)
+						PREVENT_TOOL_BREAKING,
+						Boolean.toString(DEFAULT_PREVENT_TOOL_BREAKING)
+				)
+		);
+		boolean showHeldItemTotalCounter = Boolean.parseBoolean(
+				properties.getProperty(
+						SHOW_HELD_ITEM_TOTAL_COUNTER,
+						Boolean.toString(DEFAULT_SHOW_HELD_ITEM_TOTAL_COUNTER)
 				)
 		);
 
 		properties.setProperty(REFILL_FROM_OTHER_HOTBAR_SLOTS, Boolean.toString(refillFromOtherHotbarSlots));
-		properties.setProperty(
-				PREVENT_TOOL_BREAKING_WITHOUT_REPLACEMENT,
-				Boolean.toString(preventToolBreakingWithoutReplacement)
-		);
+		properties.setProperty(PREVENT_TOOL_BREAKING, Boolean.toString(preventToolBreaking));
+		properties.setProperty(SHOW_HELD_ITEM_TOTAL_COUNTER, Boolean.toString(showHeldItemTotalCounter));
 		saveDefaults(configPath, properties);
-		return new HotbarAutoFillConfig(refillFromOtherHotbarSlots, preventToolBreakingWithoutReplacement);
+		return new HotbarAutoFillConfig(refillFromOtherHotbarSlots, preventToolBreaking, showHeldItemTotalCounter);
 	}
 
 	boolean refillFromOtherHotbarSlots() {
 		return refillFromOtherHotbarSlots;
 	}
 
-	boolean preventToolBreakingWithoutReplacement() {
-		return preventToolBreakingWithoutReplacement;
+	boolean preventToolBreaking() {
+		return preventToolBreaking;
+	}
+
+	boolean showHeldItemTotalCounter() {
+		return showHeldItemTotalCounter;
 	}
 
 	private static void saveDefaults(Path configPath, Properties properties) {
