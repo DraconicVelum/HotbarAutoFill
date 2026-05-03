@@ -13,7 +13,7 @@ It is client-side only and works on vanilla and Bukkit/Paper servers.
 
 ---
 
-## <span style="color:#8000ff;">$\LARGE\color{hsl(275, 100%, 50%)}{\textsf{Features}}$</span>
+## <span style="color:#8000ff;">$\large\color{hsl(275, 100%, 50%)}{\textsf{Features}}$</span>
 - refills used, dropped, or consumed items
 - handles food, potions, soups, and broken tools
 - stacks bottles, bowls, buckets, and similar leftovers when possible
@@ -25,7 +25,7 @@ It is client-side only and works on vanilla and Bukkit/Paper servers.
 
 ---
 
-## <span style="color:#8000ff;">$\LARGE\color{hsl(275, 100%, 50%)}{\textsf{Config}}$</span>
+## <span style="color:#8000ff;">$\large\color{hsl(275, 100%, 50%)}{\textsf{Config}}$</span>
 `config/hotbarautofill.properties`
 
 - `refillFromOtherHotbarSlots=true`
@@ -34,17 +34,17 @@ It is client-side only and works on vanilla and Bukkit/Paper servers.
 
 ---
 
-## <span style="color:#8000ff;">$\LARGE\color{hsl(275, 100%, 50%)}{\textsf{Compatibility}}$</span>
+## <span style="color:#8000ff;">$\large\color{hsl(275, 100%, 50%)}{\textsf{Compatibility}}$</span>
 - Fabric: Minecraft `26.1` through `26.1.2`
 - NeoForge: Minecraft `26.1` through `26.1.2`
 - Fabric builds need Fabric API.
 
 ---
 
-## <span style="color:#8000ff;">$\LARGE\color{hsl(275, 100%, 50%)}{\textsf{Installation}}$</span>
+## <span style="color:#8000ff;">$\large\color{hsl(275, 100%, 50%)}{\textsf{Installation}}$</span>
 Install the Fabric or NeoForge jar on the client. Servers do not need this mod or any plugin.
 
 ---
 
-## <span style="color:#8000ff;">$\LARGE\color{hsl(275, 100%, 50%)}{\textsf{License}}$</span>
+## <span style="color:#8000ff;">$\large\color{hsl(275, 100%, 50%)}{\textsf{License}}$</span>
 Licensed under the [GPLv3.0](https://github.com/DraconicVelum/HotbarAutoFill/blob/main/LICENSE).
