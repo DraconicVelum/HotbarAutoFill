@@ -71,7 +71,8 @@ final class HotbarRefill {
 			if (shouldReplaceChangedStack(selectedStack, wantedStack)) {
 				mergeSelectedRemainderIntoExistingStack(player, gameMode, inventory, selectedSlot, selectedStack);
 				if (refillSelectedSlot(player, gameMode, inventory, selectedSlot, wantedStack)) {
-					updateTrackedStack(selectedSlot, selectedStack);
+					player.stopUsingItem();
+					updateTrackedStack(selectedSlot, wantedStack);
 					cooldownTicks = 2;
 					return;
 				}
@@ -153,6 +154,7 @@ final class HotbarRefill {
 		if (wantedStack.getCount() > 1) {
 			return false;
 		}
+
 		return !ItemStack.isSameItemSameComponents(selectedStack, wantedStack);
 	}
 
@@ -259,14 +261,14 @@ final class HotbarRefill {
 	}
 
 	private static boolean canFullyMerge(ItemStack candidate, ItemStack selectedStack) {
-		if (candidate.isEmpty() || !candidate.isStackable()) {
+		if (candidate.isEmpty() || !candidate.isStackable() || !selectedStack.isStackable()) {
 			return false;
 		}
 		if (!ItemStack.isSameItemSameComponents(candidate, selectedStack)) {
 			return false;
 		}
 
-		int maxStackSize = candidate.getItem().getDefaultMaxStackSize();
+		int maxStackSize = Math.min(candidate.getMaxStackSize(), selectedStack.getMaxStackSize());
 		return candidate.getCount() + selectedStack.getCount() <= maxStackSize;
 	}
 
@@ -286,11 +288,15 @@ final class HotbarRefill {
 	}
 
 	private static void blockCurrentUseInput(Minecraft client) {
-		client.options.keyUse.setDown(false);
+		blockUseInput(client);
 		client.options.keyAttack.setDown(false);
-		while (client.options.keyUse.consumeClick()) {
-		}
 		while (client.options.keyAttack.consumeClick()) {
+		}
+	}
+
+	private static void blockUseInput(Minecraft client) {
+		client.options.keyUse.setDown(false);
+		while (client.options.keyUse.consumeClick()) {
 		}
 	}
 
