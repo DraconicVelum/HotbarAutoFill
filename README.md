@@ -1,6 +1,6 @@
 <h1 align="center"><span style="color:#8000ff;">$\LARGE\color{hsl(275, 100%, 50%)}{\textsf{Hotbar Auto Fill}}$</span></h1>
 
-<p align="center"><a href="linkout?remoteUrl=https%3a%2f%2fko-fi.com%2fdraconicvelum" rel="nofollow"> <img src="https://shields.io/badge/kofi-Buy_a_coffee-ff5f5f?logo=ko-fi&amp;type=patrons&amp;style=for-the-badge&amp;color=purple&amp;logoColor=purple" width="250" height="30"></a></p>
+<p align="center"><a href="linkout?remoteUrl=https%3a%2f%2fko-fi.com%2fdraconicvelum" rel="nofollow"> <img src="https://shields.io/badge/kofi-Buy_a_coffee-ff5f5f?logo=ko-fi&amp;type=patrons&amp;style=for-the-badge&amp;color=purple&amp;logoColor=purple" width="189" height="28"></a></p>
 
 <p align="center">
 <a href="https://github.com/DraconicVelum/HotbarAutoFill/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/release/DraconicVelum/HotbarAutoFill.svg?style=popout"></a>
