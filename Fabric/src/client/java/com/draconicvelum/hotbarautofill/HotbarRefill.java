@@ -52,7 +52,7 @@ final class HotbarRefill {
 		int selectedSlot = inventory.getSelectedSlot();
 		ItemStack selectedStack = inventory.getSelectedItem();
 
-		if (client.screen != null) {
+		if (ClientScreenAccess.hasScreen(client)) {
 			updateTrackedStack(selectedSlot, selectedStack);
 			cooldownTicks = 0;
 			recentUseOrAttackTicks = 0;
