@@ -28,7 +28,7 @@ final class HotbarItemCounter {
 
 		Minecraft client = Minecraft.getInstance();
 		LocalPlayer player = client.player;
-		if (player == null || client.screen != null) {
+		if (player == null || ClientScreenAccess.hasScreen(client)) {
 			return;
 		}
 
