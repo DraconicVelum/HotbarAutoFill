@@ -13,6 +13,7 @@
 <br>
 It is client-side only and works on vanilla and Bukkit/Paper servers.
 </p>
+<p align="center"><strong>This is a quality-of-life mod designed to improve your gameplay experience, not to provide an unfair advantage.<br>Since every server has its own rules, please make sure to read and follow them before using the mod.</strong></p>
 
 ---
 
