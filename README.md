@@ -20,11 +20,8 @@ It is client-side only and works on vanilla and Bukkit/Paper servers.
 - refills used, dropped, or consumed items
 - handles food, potions, soups, and broken tools
 - stacks bottles, bowls, buckets, and similar leftovers when possible
-- checks the main inventory first
-- optional hotbar fallback
 - optional tool protection before break
 - held-item total counter near the hotbar
-- ignores manual moves, drops, and swaps
 
 ---
 
