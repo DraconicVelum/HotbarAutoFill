@@ -21,11 +21,8 @@ It is client-side only and works on vanilla and Bukkit/Paper servers.
 - refills used, dropped, or consumed items
 - handles food, potions, soups, and broken tools
 - stacks bottles, bowls, buckets, and similar leftovers when possible
-- checks the main inventory first
-- optional hotbar fallback
 - optional tool protection before break
 - held-item total counter near the hotbar
-- ignores manual moves, drops, and swaps
 
 ---
 
@@ -39,14 +36,14 @@ It is client-side only and works on vanilla and Bukkit/Paper servers.
 ---
 
 ## <span style="color:#8000ff;">$\large\color{hsl(275, 100%, 50%)}{\textsf{Compatibility}}$</span>
-- Fabric: Minecraft `26.1` through `26.1.2`
-- NeoForge: Minecraft `26.1` through `26.1.2`
+- Fabric: Minecraft `1.14` through `1.14.4`
+- Forge: Minecraft `1.14` through `1.14.4`
 - Fabric builds need Fabric API.
 
 ---
 
 ## <span style="color:#8000ff;">$\large\color{hsl(275, 100%, 50%)}{\textsf{Installation}}$</span>
-Install the Fabric or NeoForge jar on the client. Servers do not need this mod or any plugin.
+Install the Fabric or Forge jar on the client. Servers do not need this mod or any plugin.
 
 ---
 
