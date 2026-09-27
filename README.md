@@ -36,7 +36,7 @@ It is client-side only and works on vanilla and Bukkit/Paper servers.
 ---
 
 ## <span style="color:#8000ff;">$\large\color{hsl(275, 100%, 50%)}{\textsf{Compatibility}}$</span>
-- NeoForge: Minecraft `1.8.9`
+- Forge: Minecraft `1.8.9`
 
 ---
 
