@@ -7,6 +7,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
@@ -19,6 +20,7 @@ public final class HotbarAutoFillMod {
 		container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 		NeoForge.EVENT_BUS.addListener(this::onClientTick);
 		NeoForge.EVENT_BUS.addListener(this::onRenderGui);
+		NeoForge.EVENT_BUS.addListener(this::onClickInput);
 	}
 
 	private void onClientTick(ClientTickEvent.Pre event) {
@@ -29,6 +31,14 @@ public final class HotbarAutoFillMod {
 	private void onRenderGui(RenderGuiEvent.Post event) {
 		configure();
 		HotbarItemCounter.render(event.getGuiGraphics());
+	}
+
+	private void onClickInput(InputEvent.InteractionKeyMappingTriggered event) {
+		configure();
+		if ((event.isUseItem() || event.isAttack()) && HotbarRefill.protectToolBeforeUse()) {
+			event.setSwingHand(false);
+			event.setCanceled(true);
+		}
 	}
 
 	private static void configure() {
