@@ -1,0 +1,114 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		maven {
+			name = 'forge'
+			url = 'https://maven.minecraftforge.net/'
+		}
+		maven {
+			name = 'sonatype'
+			url = 'https://oss.sonatype.org/content/repositories/snapshots/'
+		}
+	}
+	dependencies {
+		classpath 'net.minecraftforge.gradle:ForgeGradle:6.0.+'
+	}
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'maven-publish'
+
+def archiveVersionWithMinecraft = "${project.minecraft_release_version}-${project.mod_version}"
+
+version = archiveVersionWithMinecraft
+archivesBaseName = "${project.archives_base_name}-forge"
+
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
+
+repositories {
+	mavenCentral()
+}
+
+def runClientModOutput = layout.buildDirectory.dir('runClientMod/main')
+
+sourceSets {
+	runClientMod {
+		java.setSrcDirs([])
+		resources.setSrcDirs([])
+		output.resourcesDir = runClientModOutput.get().asFile
+	}
+}
+
+minecraft {
+	mappings channel: 'official', version: project.minecraft_version
+
+	runs {
+		client {
+			workingDirectory project.file('run')
+			property 'forge.logging.markers', 'SCAN,REGISTRIES'
+			property 'forge.logging.console.level', 'debug'
+
+			mods {
+				hotbarautofill {
+					source sourceSets.runClientMod
+				}
+			}
+		}
+	}
+}
+
+tasks.matching { it.name == 'runClient' }.configureEach {
+	dependsOn tasks.named('classes')
+	classpath configurations.runtimeClasspath
+	doFirst {
+		delete fileTree('run/mods') {
+			include "${project.archives_base_name}-forge-*.jar"
+		}
+		delete file('build/resources/main/com/draconicvelum')
+		delete runClientModOutput
+		copy {
+			from sourceSets.main.output.resourcesDir
+			from sourceSets.main.output.classesDirs
+			into runClientModOutput
+		}
+	}
+}
+
+tasks.named('jar') {
+	doFirst {
+		delete file('build/resources/main/com/draconicvelum')
+	}
+}
+
+dependencies {
+	minecraft "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
+}
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	inputs.property 'version', project.mod_version
+	inputs.property 'minecraft_version_range', project.minecraft_version_range
+
+	filesMatching('META-INF/mods.toml') {
+		expand(
+				'version': project.mod_version,
+				'minecraft_version_range': project.minecraft_version_range
+		)
+	}
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+	options.release = 21
+}
+
+task sourcesJar(type: Jar) {
+	from sourceSets.main.allSource
+	archiveClassifier = 'sources'
+	version = archiveVersionWithMinecraft
+}
+
+artifacts {
+	archives sourcesJar
+}
