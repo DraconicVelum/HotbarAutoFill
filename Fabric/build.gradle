@@ -1,0 +1,114 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		maven {
+			name = 'Fabric'
+			url = 'https://maven.fabricmc.net/'
+		}
+		gradlePluginPortal()
+	}
+	dependencies {
+		classpath 'net.fabricmc:fabric-loom:0.12-SNAPSHOT'
+	}
+}
+
+apply plugin: 'fabric-loom'
+apply plugin: 'maven-publish'
+
+def archiveVersionWithMinecraft = "${project.minecraft_release_version}-${project.mod_version}"
+
+version = archiveVersionWithMinecraft
+archivesBaseName = "${project.archives_base_name}-fabric"
+
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
+
+repositories {
+	mavenCentral()
+	maven {
+		name = 'Fabric'
+		url = 'https://maven.fabricmc.net/'
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+}
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	inputs.property 'version', project.mod_version
+	inputs.property 'minecraft_version_range', project.fabric_minecraft_version_range
+	inputs.property 'loader_version_range', project.loader_version_range
+
+	filesMatching('fabric.mod.json') {
+		expand(
+				'version': project.mod_version,
+				'minecraft_version_range': project.fabric_minecraft_version_range,
+				'loader_version_range': project.loader_version_range
+		)
+	}
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+	options.compilerArgs += ['-proc:none']
+}
+
+task sourcesJar(type: Jar) {
+	from sourceSets.main.allSource
+	archiveClassifier = 'sources'
+	version = archiveVersionWithMinecraft
+}
+
+artifacts {
+	archives sourcesJar
+}
+
+def stripFabricLoaderSignatures = {
+	def loaderJars = fileTree("${rootDir}/.gradle/loom-cache/remapped_mods") {
+		include "**/fabric-loader-${project.loader_version}.jar"
+	}.files
+
+	loaderJars.each { loaderJar ->
+		def tempJar = new File(loaderJar.parentFile, "${loaderJar.name}.unsigned")
+		def changed = false
+
+		new java.util.zip.ZipInputStream(new FileInputStream(loaderJar)).withCloseable { input ->
+			new java.util.zip.ZipOutputStream(new FileOutputStream(tempJar)).withCloseable { output ->
+				java.util.zip.ZipEntry entry
+				while ((entry = input.nextEntry) != null) {
+					def upperName = entry.name.toUpperCase(Locale.ROOT)
+					def signedEntry = (upperName == 'META-INF/MANIFEST.MF'
+							|| upperName.endsWith('.SF')
+							|| upperName.endsWith('.RSA')
+							|| upperName.endsWith('.DSA'))
+
+					if (signedEntry) {
+						changed = true
+						continue
+					}
+
+					def copy = new java.util.zip.ZipEntry(entry.name)
+					copy.time = entry.time
+					output.putNextEntry(copy)
+					output << input
+					output.closeEntry()
+				}
+			}
+		}
+
+		if (changed) {
+			loaderJar.delete()
+			tempJar.renameTo(loaderJar)
+		} else {
+			tempJar.delete()
+		}
+	}
+}
+
+runClient.doFirst {
+	stripFabricLoaderSignatures()
+}
