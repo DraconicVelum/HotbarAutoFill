@@ -24,6 +24,10 @@ public final class HotbarAutoFillMod implements ClientModInitializer {
 		HotbarRefill.tick(client);
 	}
 
+	public static boolean protectToolBeforeUse(net.minecraft.client.Minecraft client) {
+		return HotbarRefill.protectToolBeforeUse(client);
+	}
+
 	static void configure(HotbarAutoFillConfig config) {
 		HotbarRefill.configure(config);
 		HotbarItemCounter.configure(config);
