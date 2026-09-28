@@ -24,6 +24,7 @@
     ]
   },
   "mixins": [
+    "hotbarautofill.mixins.json"
   ],
   "depends": {
     "fabricloader": "${loader_version_range}",
