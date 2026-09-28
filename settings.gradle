@@ -1,0 +1,10 @@
+pluginManagement {
+	repositories {
+		gradlePluginPortal()
+		maven { url = 'https://maven.neoforged.net/releases' }
+	}
+}
+
+rootProject.name = 'HotbarAutoFill-1.21-1.21.4'
+
+include('Fabric', 'NeoForge')

@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.draconicvelum.hotbarautofill.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "InGameHudMixin",
+    "MinecraftClientMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
