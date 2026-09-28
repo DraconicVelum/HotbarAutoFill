@@ -1,0 +1,20 @@
+modLoader="javafml"
+loaderVersion="[25,)"
+issueTrackerURL="https://github.com/DraconicVelum/HotbarAutoFill/issues"
+
+[[mods]]
+modId="hotbarautofill"
+version="${version}"
+displayName="Hotbar Auto Fill"
+displayURL="https://github.com/DraconicVelum/HotbarAutoFill"
+authors="Draconic Velum"
+description='''
+Client-side hotbar refill for vanilla and Bukkit/Paper servers.
+'''
+
+[[dependencies.hotbarautofill]]
+modId="minecraft"
+mandatory=true
+versionRange="${minecraft_version_range}"
+ordering="NONE"
+side="CLIENT"
