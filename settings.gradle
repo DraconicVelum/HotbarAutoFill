@@ -1,0 +1,3 @@
+rootProject.name = 'HotbarAutoFill-1.8.9'
+
+include('Forge')
