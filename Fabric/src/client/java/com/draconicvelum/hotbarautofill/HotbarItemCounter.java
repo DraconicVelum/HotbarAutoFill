@@ -66,7 +66,7 @@ final class HotbarItemCounter {
 					ChargedProjectiles.EMPTY
 			);
 			if (!chargedProjectiles.isEmpty()) {
-				return chargedProjectiles.itemCopies().getFirst();
+				return chargedProjectiles.itemCopies().findFirst().orElse(ItemStack.EMPTY);
 			}
 		}
 
