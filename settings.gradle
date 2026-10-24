@@ -17,6 +17,33 @@ pluginManagement {
 	}
 }
 
-rootProject.name = 'HotbarAutoFill'
+rootProject.name = 'HotbarAutoFill-26.3'
 
 include('Fabric', 'NeoForge')
+
+def targetRoot = file('targets')
+if (targetRoot.isDirectory()) {
+	include(':versions')
+	project(':versions').projectDir = file('gradle-targets')
+
+	targetRoot.listFiles()
+			.findAll { it.isDirectory() && new File(it, 'settings.gradle').exists() }
+			.sort { a, b -> a.name <=> b.name }
+			.each { targetDir ->
+				def proxyPath = ":versions:${targetDir.name}"
+				include(proxyPath)
+				project(proxyPath).projectDir = file("gradle-targets/${targetDir.name}")
+
+				def proxyDir = file("gradle-targets/${targetDir.name}")
+				if (proxyDir.isDirectory()) {
+					proxyDir.listFiles()
+							.findAll { it.isDirectory() && new File(it, 'build.gradle').exists() }
+							.sort { a, b -> a.name <=> b.name }
+							.each { loaderProxyDir ->
+								def loaderProxyPath = "${proxyPath}:${loaderProxyDir.name}"
+								include(loaderProxyPath)
+								project(loaderProxyPath).projectDir = loaderProxyDir
+							}
+				}
+			}
+}
