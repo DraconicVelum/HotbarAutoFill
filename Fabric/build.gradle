@@ -7,8 +7,9 @@ def archiveVersionWithMinecraft = "${project.minecraft_release_version}-${projec
 def toGradleRange = { value ->
 	def parts = value.trim().split('\\s+')
 	def lower = parts[0].replace('>=', '')
-	def upper = parts.length > 1 ? parts[1].replace('<=', '') : null
-	upper == null ? "[${lower},)" : "[${lower},${upper}]"
+	def upper = parts.length > 1 ? parts[1].replaceFirst('^<=?', '') : null
+	def upperBracket = parts.length > 1 && parts[1].startsWith('<=') ? ']' : ')'
+	upper == null ? "[${lower},)" : "[${lower},${upper}${upperBracket}"
 }
 
 base {
