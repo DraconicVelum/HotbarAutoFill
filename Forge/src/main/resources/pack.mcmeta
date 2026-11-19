@@ -1,0 +1,8 @@
+{
+  "pack": {
+    "description": "Hotbar Auto Fill resources",
+    "pack_format": 4,
+    "forge:client_resources_pack_format": 4,
+    "forge:server_data_pack_format": 4
+  }
+}
