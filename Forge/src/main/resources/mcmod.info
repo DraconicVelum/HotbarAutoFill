@@ -1,0 +1,18 @@
+[
+  {
+    "modid": "hotbarautofill",
+    "name": "Hotbar Auto Fill",
+    "description": "Client-side hotbar refill for vanilla and Bukkit/Paper servers.",
+    "version": "${version}",
+    "mcversion": "${minecraft_version_range}",
+    "url": "https://github.com/DraconicVelum/HotbarAutoFill",
+    "updateUrl": "",
+    "authorList": [
+      "Draconic Velum"
+    ],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]
