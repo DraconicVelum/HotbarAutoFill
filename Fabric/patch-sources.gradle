@@ -1,0 +1,36 @@
+// Adapt the shared sources to the selected Minecraft patch at build time.
+if (project.minecraft_version != '1.14.4') {
+    def patchSources = file("$buildDir/generated/patchSources")
+    def replacements = [
+        "DiffuseLighting": "GuiLighting"
+    ]
+    if (project.minecraft_version in ['1.14', '1.14.1', '1.14.2']) {
+        replacements.putAll([
+            'net.minecraft.text.LiteralText': 'net.minecraft.network.chat.TextComponent',
+            'LiteralText': 'TextComponent'
+        ])
+    }
+    if (project.minecraft_version in ['1.14', '1.14.1']) {
+        replacements.putAll([
+            '.setCount(': '.setAmount(',
+            '.getCount(': '.getAmount(',
+            '.isDamageable(': '.hasDurability(',
+            '.isStackable(': '.canStack(',
+            '.getMaxCount(': '.getMaxAmount(',
+            '.getMaxDamage(': '.getDurability('
+        ])
+    }
+    task preparePatchSources(type: Sync) {
+        from 'src/main/java'
+        into patchSources
+        inputs.property 'replacements', replacements
+        filteringCharset = 'UTF-8'
+        filter { String line ->
+            replacements.each { before, after -> line = line.replace(before, after) }
+            line
+        }
+    }
+    sourceSets.main.java.setSrcDirs([patchSources])
+    compileJava.dependsOn preparePatchSources
+    sourcesJar.dependsOn preparePatchSources
+}
