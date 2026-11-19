@@ -1,0 +1,70 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		maven {
+			name = 'forge'
+			url = 'https://maven.minecraftforge.net/'
+		}
+		maven {
+			name = 'sonatype'
+			url = 'https://oss.sonatype.org/content/repositories/snapshots/'
+		}
+	}
+	dependencies {
+		classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+	}
+}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'maven-publish'
+
+def archiveVersionWithMinecraft = "${project.minecraft_release_version}-${project.mod_version}"
+
+version = archiveVersionWithMinecraft
+archivesBaseName = "${project.archives_base_name}-forge"
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+	mavenCentral()
+}
+
+minecraft {
+	version = "${project.minecraft_version}-${project.forge_version}"
+	runDir = 'run'
+	mappings = 'stable_39'
+	replace '@VERSION@', project.mod_version
+	replaceIn 'HotbarAutoFillMod.java'
+}
+
+processResources {
+	inputs.property 'version', project.mod_version
+	inputs.property 'minecraft_version_range', project.minecraft_version_range
+
+	from(sourceSets.main.resources.srcDirs) {
+		include 'mcmod.info'
+		expand(
+				'version': inputs.properties.version,
+				'minecraft_version_range': inputs.properties.minecraft_version_range
+		)
+	}
+
+	from(sourceSets.main.resources.srcDirs) {
+		exclude 'mcmod.info'
+	}
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+task sourcesJar(type: Jar) {
+	from sourceSets.main.allSource
+	classifier = 'sources'
+	version = archiveVersionWithMinecraft
+}
+
+artifacts {
+	archives sourcesJar
+}
