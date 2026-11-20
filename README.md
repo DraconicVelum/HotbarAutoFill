@@ -36,10 +36,8 @@ It is client-side only and works on vanilla and Bukkit/Paper servers.
 ---
 
 ## <span style="color:#8000ff;">$\large\color{hsl(275, 100%, 50%)}{\textsf{Compatibility}}$</span>
-- Fabric: Minecraft `1.14` through `26.3`
-- NeoForge: Minecraft `1.20.1` through `26.3`
-- Forge: Minecraft `1.7.10` through `1.20.6`
-- Fabric builds need Fabric API.
+- NeoForge: Minecraft `1.20.2`
+- Forge: Minecraft `1.20.2`
 
 ---
 
