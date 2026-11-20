@@ -1,0 +1,71 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		maven { url = 'https://maven.minecraftforge.net/' }
+		maven { url = 'https://maven.neoforged.net/releases' }
+	}
+	dependencies {
+		classpath 'net.minecraftforge.gradle:ForgeGradle:6.0.+'
+	}
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+
+version = "${project.legacy_neoforge_minecraft_version}-${project.mod_version}"
+archivesBaseName = "${project.archives_base_name}-neoforge"
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+repositories {
+	mavenCentral()
+	maven { url = 'https://maven.neoforged.net/releases' }
+}
+
+
+
+minecraft {
+	mappings channel: 'official', version: project.legacy_neoforge_minecraft_version
+	runs {
+		client {
+			workingDirectory project.file('run')
+			mods {
+				hotbarautofill {
+					source sourceSets.main
+				}
+			}
+		}
+	}
+}
+
+dependencies {
+	minecraft "net.neoforged:forge:${project.legacy_neoforge_minecraft_version}-${project.legacy_neoforge_version}"
+}
+
+processResources {
+	inputs.property 'version', project.mod_version
+	inputs.property 'minecraft_version_range', "[${project.legacy_neoforge_minecraft_version}]"
+	filesMatching('META-INF/mods.toml') {
+		expand(
+				'version': inputs.properties.version,
+				'minecraft_version_range': inputs.properties.minecraft_version_range
+		)
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = 'UTF-8'
+	options.release = 17
+}
+
+tasks.named('jar') {
+	finalizedBy 'reobfJar'
+}
+
+task sourcesJar(type: Jar) {
+	from sourceSets.main.allSource
+	archiveClassifier = 'sources'
+}
+
+artifacts {
+	archives sourcesJar
+}
