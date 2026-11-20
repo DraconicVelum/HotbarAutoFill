@@ -1,0 +1,20 @@
+// Adapt the shared sources to the selected Minecraft patch at build time.
+if (project.minecraft_version == '1.17') {
+    def patchSources = file("$buildDir/generated/patchSources")
+    def replacements = [
+        "ItemStack.areNbtEqual(": "ItemStack.areTagsEqual("
+    ]
+    task preparePatchSources(type: Sync) {
+        from 'src/main/java'
+        into patchSources
+        inputs.property 'replacements', replacements
+        filteringCharset = 'UTF-8'
+        filter { String line ->
+            replacements.each { before, after -> line = line.replace(before, after) }
+            line
+        }
+    }
+    sourceSets.main.java.setSrcDirs([patchSources])
+    compileJava.dependsOn preparePatchSources
+    sourcesJar.dependsOn preparePatchSources
+}
